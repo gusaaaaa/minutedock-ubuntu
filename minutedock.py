@@ -24,7 +24,6 @@ class MinutedockUbuntu:
     self.current_entry.attach(self)
     self.data = self.current_entry.data
 
-    timer = timedelta(seconds=int(self.data['duration']))
     self.ind = appindicator.Indicator("minutedock-ubuntu", 
       "indicator-messages", 
       appindicator.CATEGORY_APPLICATION_STATUS)
@@ -32,26 +31,27 @@ class MinutedockUbuntu:
     self.ind.set_attention_icon("indicator-messages-new")
     self.ind.set_icon_theme_path(os.path.realpath('.'))
     self.ind.set_icon("minutedock")
-    hours   =  timer.seconds / 60  / 60
-    minutes = (timer.seconds / 60) % 60
-    self.ind.set_label("%02d:%02d" % (hours, minutes))
 
     # create a menu
     self.menu = gtk.Menu()
-
-    self.update_menu("00:00")
-
     self.ind.set_menu(self.menu)
+
+    self.update(self.data)
+
+  @classmethod
+  def __get_time_from_data(cls, data):
+    timer = timedelta(seconds=int(data['duration']))
+    hours   =  timer.seconds / 60  / 60
+    minutes = (timer.seconds / 60) % 60
+    return "%02d:%02d" % (hours, minutes)
 
   def update(self, data):
     self.data = data
-    timer = timedelta(seconds=int(data['duration']))
-    clock = datetime(1, 1, 1) + timer
+    time_str = self.__get_time_from_data(self.data)
+    self.ind.set_label(time_str)
+    self.update_menu(time_str)
 
   def update_menu(self, clock_status):
-    self.ind.set_label("%02d:%02d" % (clock.hour, clock.minute))
-    self.update_menu()
-
     self.menu.hide()
 
     for i in self.menu.get_children():

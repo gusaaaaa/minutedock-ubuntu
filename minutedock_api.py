@@ -8,7 +8,9 @@ class MinutedockApi:
 
   def __init__(self, api_key = None):
     if api_key is None:
-      self.api_key = os.environ['MINUTEDOCK_KEY']
+      self.api_key = os.environ.get('MINUTEDOCK_KEY')
+      if self.api_key is None:
+          raise KeyError, "Environment variable MINUTEDOCK_KEY must be set prior to execution. See your profile page for more info."
     else:
       self.api_key = api_key
 

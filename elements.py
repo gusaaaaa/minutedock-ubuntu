@@ -6,7 +6,7 @@ import signal
 
 class CurrentEntry(Subject):
 
-  def __init__(self, pooling_interval=15):
+  def __init__(self, polling_interval=15):
     Subject.__init__(self)
     self.__api = MinutedockApi()
 
