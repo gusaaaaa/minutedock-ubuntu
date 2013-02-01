@@ -35,8 +35,8 @@ class MinutedockUbuntu:
     self.ind.set_icon_theme_path(os.path.realpath('.'))
     self.ind.set_icon("minutedock")
 
-    hours = timer.seconds / (60 * 60)
-    minutes = timer.seconds % (60 * 60)
+    hours   =  timer.seconds / 60  / 60
+    minutes = (timer.seconds / 60) % 60
     self.ind.set_label("%02d:%02d" % (hours, minutes))
 
     # create a menu
