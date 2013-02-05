@@ -14,13 +14,13 @@ class CurrentEntry(Subject):
     self.data = self.__api.get_current_entry()
     signal.signal(signal.SIGALRM, self.__poll_server)
     signal.setitimer(signal.ITIMER_REAL, polling_interval, polling_interval)
-    
+
   def start_timer(self):
     self.__api.start_current_entry_timer()
 
   def pause_timer(self):
     self.__api.pause_current_entry_timer(self.data['id'])
-  
+
   # def log:
 
   def __poll_server(self, signum, frame):

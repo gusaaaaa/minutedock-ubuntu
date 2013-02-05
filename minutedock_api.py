@@ -5,12 +5,14 @@ import os
 
 class MinutedockApi:
   URL_BASE = 'https://minutedock.com/api/v1'
-  
+
   def __init__(self, api_key = None):
     if api_key is None:
-      self.api_key = os.environ['MINUTEDOCK_KEY']
+      self.api_key = os.environ.get('MINUTEDOCK_KEY')
+      if self.api_key is None:
+          raise KeyError, "Environment variable MINUTEDOCK_KEY must be set prior to execution. See your profile page for more info."
     else:
-		  self.api_key = api_key
+      self.api_key = api_key
 
   def get_current_entry(self):
     response = urllib.urlopen(self.URL_BASE + '/entries/current.json?api_key=' + self.api_key).read()

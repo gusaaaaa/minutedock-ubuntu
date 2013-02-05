@@ -24,40 +24,48 @@ class MinutedockUbuntu:
     self.current_entry.attach(self)
     self.data = self.current_entry.data
 
-    timer = timedelta(seconds=int(self.data['duration']))
-    clock = datetime(1, 1, 1) + timer
-
     self.ind = appindicator.Indicator("minutedock-ubuntu", 
       "indicator-messages", 
       appindicator.CATEGORY_APPLICATION_STATUS)
-    
     self.ind.set_status(appindicator.STATUS_ACTIVE)
     self.ind.set_attention_icon("indicator-messages-new")
     self.ind.set_icon_theme_path(os.path.realpath('.'))
     self.ind.set_icon("minutedock")
-    self.ind.set_label("%02d:%02d" % (clock.hour, clock.minute))
 
     # create a menu
     self.menu = gtk.Menu()
-
-    self.update_menu()
-
     self.ind.set_menu(self.menu)
+
+    self.update(self.data)
+
+  @classmethod
+  def __get_time_from_data(cls, data):
+    timer = timedelta(seconds=int(data['duration']))
+    hours   =  timer.seconds / 60  / 60
+    minutes = (timer.seconds / 60) % 60
+    return "%02d:%02d" % (hours, minutes)
 
   def update(self, data):
     self.data = data
-    timer = timedelta(seconds=int(data['duration']))
-    clock = datetime(1, 1, 1) + timer
-    self.ind.set_label("%02d:%02d" % (clock.hour, clock.minute))
-    self.update_menu()
+    time_str = self.__get_time_from_data(self.data)
+    self.ind.set_label(time_str)
+    self.update_menu(time_str)
 
-  def update_menu(self):
+  def update_menu(self, clock_status):
     self.menu.hide()
 
     for i in self.menu.get_children():
       self.menu.remove(i)
-    
+
     # create items for the menu - labels, checkboxes, radio buttons and images are supported:
+    # KDE doesn't support app indicator, so the label is created as a disabled
+    # menu item
+    desktoptype = os.environ.get('DESKTOP_SESSION')
+    if 'kde' in desktoptype:
+        item = gtk.MenuItem("MinuteDock: %s" % (clock_status,))
+        item.set_sensitive(False)
+        item.show()
+        self.menu.append(item)
 
     if self.data['timer_active']:
       item = gtk.MenuItem("Pause")
