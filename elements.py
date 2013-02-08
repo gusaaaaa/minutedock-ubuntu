@@ -16,12 +16,14 @@ class CurrentEntry(Subject):
     signal.setitimer(signal.ITIMER_REAL, polling_interval, polling_interval)
 
   def start_timer(self):
-    self.__api.start_current_entry_timer()
+    self.data = self.__api.start_current_entry_timer()
 
   def pause_timer(self):
-    self.__api.pause_current_entry_timer(self.data['id'])
+    self.data = self.__api.pause_current_entry_timer()
 
-  # def log:
+  def log(self):
+    self.__api.log_current_entry()
+    self.data = self.__api.get_current_entry()
 
   def __poll_server(self, signum, frame):
     # store current entry in data instance variable

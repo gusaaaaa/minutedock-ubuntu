@@ -51,6 +51,7 @@ class MinutedockUbuntu:
     self.ind.set_label(time_str)
     self.update_menu(time_str)
 
+  # TODO get data directly from self
   def update_menu(self, clock_status):
     self.menu.hide()
 
@@ -76,7 +77,14 @@ class MinutedockUbuntu:
       item.show()
       self.menu.append(item)
 
+    # TODO get data directly from self
     item.connect("activate", self.toggle_timer, self.data['timer_active'])
+
+    item = gtk.MenuItem("Log")
+    item.show()
+    self.menu.append(item)
+
+    item.connect("activate", self.log)
 
     image = gtk.ImageMenuItem(gtk.STOCK_QUIT)
     image.connect("activate", self.quit)
@@ -93,6 +101,9 @@ class MinutedockUbuntu:
       self.current_entry.pause_timer()
     else:
       self.current_entry.start_timer()
+
+  def log(self, widget, data=None):
+    self.current_entry.log()
 
 def main():
   gtk.main()
